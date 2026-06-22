@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanEye - Map</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1">UrbanEye</span>
+            </div>
+        </nav>
+    </header>
+
+    <div id="map"></div>
+    <!-- report button -->
+    <a href="report.html" class="btn btn-primary fab-btn">Report Issue</a>
+
+    <!-- add feature -->
+    <section class="container py-5 text-center">
+        <h2>Welcome to UrbanEye</h2>
+        <p class="text-muted">More features coming soon. Scroll down to explore.</p>
+    </section>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Chennai
+            const map = L.map('map').setView([13.0827, 80.2707], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+            function loadReports() {
+                const savedReports = JSON.parse(localStorage.getItem('civic_reports')) || [];
+
+                savedReports.forEach(report => {
+                    // Drop a pin for every saved report
+                    L.marker([report.lat, report.lng])
+                        .addTo(map)
+                        .bindPopup(`<b>${report.category.toUpperCase()}</b><br>${report.description}`);
+                });
+                //  recent reports - pan the map to the newest one
+                if (savedReports.length > 0) {
+                    const latest = savedReports[savedReports.length - 1];
+                    map.setView([latest.lat, latest.lng], 15);
+                }
+            }
+
+            loadReports();
+        });
+    </script>
+</body>
+
+</html>
