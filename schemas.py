@@ -29,7 +29,10 @@ class UserResponse(BaseModel):
     email:str
     phone:str
     role:str
-    created_at:datetime                     
+    created_at:datetime 
+    model_config={
+        "from_attributes":True
+    }                    
 class Report(BaseModel):
     id:int
     user_id:int
@@ -43,13 +46,78 @@ class Report(BaseModel):
     address:str
     priority:str
     status:str
-    created_at:datetime  
+    created_at:datetime 
+class ReportCreate(BaseModel):
+    user_id:int
+    department_id:int
+    title:str
+    description:str
+    category:str
+    image_url:str
+    latitude:float
+    longitude:float
+    address:str
+    priority:str
+    status:str
+class ReportUpdate(BaseModel):
+    title:str
+    description:str
+    category:str
+    image_url:str
+    latitude:float
+    longitude:float
+    address:str
+    priority:str
+    status:str
+class ReportResponse(BaseModel):
+    id:int
+    user_id:int
+    department_id:int
+    title:str
+    description:str
+    category:str
+    image_url:str
+    latitude:float
+    longitude:float
+    address:str
+    priority:str
+    status:str
+    created_at:datetime   
+    model_config = {
+    "from_attributes": True
+}                            
 class Status(BaseModel):
     id:int
     report_id:int
     comment:str
     updated_by:str
     timestamp:datetime
+class StatusCreate(BaseModel):
+    report_id:int
+    comment:str
+    updated_by:str
+class StatusUpdate(BaseModel):
+    comment:str
+    updated_by:str
+class StatusResponse(BaseModel):
+    id:int
+    report_id:int
+    comment:str
+    updated_by:str
+    timestamp:datetime  
+    model_config = {
+    "from_attributes": True
+}      
 class Department(BaseModel):
     id:int
-    department_name:str        
+    department_name:str   
+class DepartmentCreate(BaseModel):
+    department_name:str
+class DepartmentUpdate(BaseModel):
+    department_name:str
+class DepartmentResponse(BaseModel):
+    id:int
+    department_name:str
+    model_config = {
+    "from_attributes": True
+}
