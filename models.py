@@ -4,36 +4,31 @@ from database import Base
 class Users(Base):
     __tablename__='users'
     id=Column(Integer,primary_key=True,index=True)
-    name=Column(String(100))
-    email=Column(String(100))
-    phone=Column(String(100))
-    password=Column(String(100))
-    role=Column(String(100))
+    name = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    phone = Column(String(100), nullable=False)
+    password = Column(String(100), nullable=False)
+    role = Column(String(100), nullable=False)
     created_at=Column(DateTime,default=datetime.utcnow)
 class Reports(Base):
     __tablename__='reports'
     id=Column(Integer,primary_key=True,index=True)
-    user_id=Column(Integer,ForeignKey('users.id'))
-    department_id=Column(Integer,ForeignKey('departments.id'))
-    title=Column(String(100))
-    description=Column(Text(300))
-    category=Column(String(100))
-    image_url=Column(String(100))
-    latitude=Column(Float)
-    longitude=Column(Float)
-    address=Column(String(100))
-    priority=Column(String(100))
-    status=Column(String(100))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
+    description = Column(Text, nullable=False)
+    category = Column(String(100), nullable=False)
+    priority = Column(String(100), nullable=False)
+    status = Column(String(100), nullable=False)
     created_at=Column(DateTime,default=datetime.utcnow)
 class Status(Base):
     __tablename__='status'
     id=Column(Integer,primary_key=True,index=True)
-    report_id=Column(Integer,ForeignKey('reports.id'))
-    comment=Column(String(100))
-    updated_by=Column(String(100))
+    report_id = Column(Integer, ForeignKey("reports.id"), nullable=False)
+    comment = Column(String(100), nullable=False)
+    updated_by = Column(String(100), nullable=False)
     timestamp=Column(DateTime,default=datetime.utcnow)
 class Departments(Base):
     __tablename__='departments'
     id=Column(Integer,primary_key=True,index=True)
-    department_name=Column(String(100))
+    department_name = Column(String(100), unique=True, nullable=False)
           
