@@ -5,10 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UrbanEye - Map</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 
 <body>
@@ -17,15 +16,81 @@
         <nav class="navbar navbar-dark bg-dark">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">UrbanEye</span>
+                <div class="navbar-auth-area" id="navbarAuthArea"> </div>
             </div>
         </nav>
     </header>
 
-    <div id="map"></div>
-    <!-- report button -->
-    <a href="report.html" class="btn btn-primary fab-btn">Report Issue</a>
+    <div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="authModalLabel">Welcome to UrbanEye</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="auth-tabs">
+                        <button class="auth-tab-btn active" data-tab="register" type="button">Register</button>
+                        <button class="auth-tab-btn" data-tab="login" type="button">Login</button>
+                    </div>
+                    <div id="authMsg" class="auth-msg"></div>
+                    <div class="auth-tab-pane active" id="paneRegister">
+                        <form id="registerForm" autocomplete="off">
+                            <div class="mb-3">
+                                <label class="form-label" for="regName">Full Name</label>
+                                <input type="text" class="form-control" id="regName" placeholder="Steve" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="regEmail">Email</label>
+                                <input type="email" class="form-control" id="regEmail"
+                                    placeholder="goldenapples@example.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="regPhone">Phone</label>
+                                <input type="tel" class="form-control" id="regPhone" placeholder="+91 9876543210"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="regPassword">Password</label>
+                                <input type="password" class="form-control" id="regPassword"
+                                    placeholder="Min 6 characters" required minlength="6">
+                            </div>
+                            <input type="hidden" id="regRole" value="citizen">
+                            <button type="submit" class="auth-submit-btn" id="regSubmitBtn">Create Account</button>
+                        </form>
+                        <div class="auth-divider">or</div>
+                        <p class="text-center text-muted" style="font-size:0.85rem;">Already have an account?
+                            <a href="#" class="auth-switch-link" data-tab="login"
+                                style="color:#0f3460;font-weight:600;">Log in</a>
+                        </p>
+                    </div>
+                    <div class="auth-tab-pane" id="paneLogin">
+                        <form id="loginForm" autocomplete="off">
+                            <div class="mb-3">
+                                <label class="form-label" for="loginEmail">Email</label>
+                                <input type="email" class="form-control" id="loginEmail"
+                                    placeholder="goldenapples@example.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="loginPassword">Password</label>
+                                <input type="password" class="form-control" id="loginPassword"
+                                    placeholder="Your password" required>
+                            </div>
+                            <button type="submit" class="auth-submit-btn" id="loginSubmitBtn">Log In</button>
+                        </form>
+                        <div class="auth-divider">or</div>
+                        <p class="text-center text-muted" style="font-size:0.85rem;">Don't have an account?
+                            <a href="#" class="auth-switch-link" data-tab="register"
+                                style="color:#0f3460;font-weight:600;">Register</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- add feature -->
+    <div id="map"></div>
+    <a href="report.html" class="btn btn-primary fab-btn">Report Issue</a>
     <section class="container py-5 text-center">
         <h2>Welcome to UrbanEye</h2>
         <hr>
@@ -43,7 +108,6 @@
     </section>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // Chennai
@@ -52,25 +116,64 @@
                 maxZoom: 19,
                 attribution: '© OpenStreetMap'
             }).addTo(map);
-            function loadReports() {
-                const savedReports = JSON.parse(localStorage.getItem('civic_reports')) || [];
-
-                savedReports.forEach(report => {
-                    // Drop a pin for every saved report
-                    L.marker([report.lat, report.lng])
-                        .addTo(map)
-                        .bindPopup(`<b>${report.category.toUpperCase()}</b><br>${report.description}`);
+            const statusColors = {
+                submitted: "#dc3545",
+                acknowledged: "#ffc107",
+                in_progress: "#17a2b8",
+                resolved: "#28a745",
+            };
+            function createColorIcon(color) {
+                return L.divIcon({
+                    className: "custom-marker",
+                    html: `<div style="
+                        background:${color};
+                        width:14px; height:14px;
+                        border-radius:50%;
+                        border:2px solid #fff;
+                        box-shadow:0 2px 6px rgba(0,0,0,0.4);
+                    "></div>`,
+                    iconSize: [14, 14],
+                    iconAnchor: [7, 7],
+                    popupAnchor: [0, -10],
                 });
-                //  recent reports - pan the map to the newest one
-                if (savedReports.length > 0) {
-                    const latest = savedReports[savedReports.length - 1];
-                    map.setView([latest.lat, latest.lng], 15);
+            }
+            async function loadReports() {
+                try {
+                    const res = await fetch(`${API_BASE}/reports`);
+                    if (!res.ok) throw new Error("API unavailable");
+                    const reports = await res.json();
+
+                    reports.forEach(report => {
+                        const color = statusColors[report.status] || "#6c757d";
+                        const photoHtml = report.photo_url
+                            ? `<br><img src="${API_BASE}${report.photo_url}" style="max-width:150px;border-radius:6px;margin-top:6px;">`
+                            : "";
+
+                        L.marker([report.latitude, report.longitude], { icon: createColorIcon(color) })
+                            .addTo(map)
+                            .bindPopup(
+                                `<b>${report.category.toUpperCase()}</b><br>` +
+                                `${report.description}<br>` +
+                                `<small>Status: <strong>${report.status}</strong></small>` +
+                                `<br><small>Dept: ${report.department}</small>` +
+                                photoHtml
+                            );
+                    });
+                    if (reports.length > 0) {
+                        const latest = reports[0]; // already sorted desc
+                        map.setView([latest.latitude, latest.longitude], 15);
+                    }
+                } catch (err) {
+                    console.warn("Could not load reports from API:", err.message);
+                    console.info("Make sure the backend is running: uvicorn main:app --reload");
                 }
             }
 
             loadReports();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js?v=2"></script>
 </body>
 
 </html>
