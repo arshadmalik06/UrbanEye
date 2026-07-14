@@ -5,6 +5,16 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 Base.metadata.create_all(bind=engine)
 app = FastAPI(title="UrbanEye API",description="Citizen Issue Reporting System",version="1.0.0")
+
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 
 def home():
@@ -70,8 +80,8 @@ def delete_user(user_id:int,db:Session=Depends(get_db)):
     db.delete(existing_user)
     db.commit()
     return {"message":"User deleted successfully"}
-@app.post("/reports",response_model=schemas.Report)
-def create_report(report:schemas.Report,db:Session=Depends(get_db)):
+@app.post("/reports",response_model=schemas.ReportResponse)
+def create_report(report:schemas.ReportCreate,db:Session=Depends(get_db)):
     new_report=models.Reports(user_id=report.user_id,
                               department_id=report.department_id,
                               title=report.title,
