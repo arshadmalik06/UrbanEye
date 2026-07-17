@@ -16,12 +16,12 @@ app.add_middleware(
 )
 
 @app.get("/")
-
 def home():
     return{
         "message":"Welcome to UrbanEye API",
         "status":"Server is running successfully"
     }
+
 def get_db():
     db=session()
     try:
@@ -90,9 +90,9 @@ def create_report(report:schemas.ReportCreate,db:Session=Depends(get_db)):
                               image_url=report.image_url,
                               latitude=report.latitude,
                               longitude=report.longitude,
-                              address=report.address,
-                              priority=report.priority,
-                              status=report.status)
+                              address=report.address or "",
+                              priority=report.priority or "medium",
+                              status=report.status or "submitted")
     db.add(new_report)
     db.commit()
     db.refresh(new_report)
@@ -108,12 +108,10 @@ def get_all_reports(db:Session=Depends(get_db)):
     reports=db.query(models.Reports).all()
     return reports
 @app.put("/reports/{report_id}",response_model=schemas.Report)
-def update_report(report_id:int,report:schemas.Report,db:Session=Depends(get_db)):
+def update_report(report_id:int,report:schemas.ReportUpdate,db:Session=Depends(get_db)):
     existing_report=db.query(models.Reports).filter(models.Reports.id==report_id).first()
     if not existing_report:
         raise HTTPException(status_code=404,detail="Report not found")
-    existing_report.user_id=report.user_id
-    existing_report.department_id=report.department_id
     existing_report.title=report.title
     existing_report.description=report.description
     existing_report.category=report.category
@@ -135,7 +133,7 @@ def delete_report(report_id:int,db:Session=Depends(get_db)):
     db.commit()
     return {"message":"Report deleted successfully"}
 @app.post("/status",response_model=schemas.Status)
-def create_status(status:schemas.Status,db:Session=Depends(get_db)):
+def create_status(status:schemas.StatusCreate,db:Session=Depends(get_db)):
     new_status=models.Status(report_id=status.report_id,
                              comment=status.comment,
                              updated_by=status.updated_by)
@@ -154,11 +152,10 @@ def get_all_status(db:Session=Depends(get_db)):
     status_list=db.query(models.Status).all()
     return status_list
 @app.put("/status/{status_id}",response_model=schemas.Status)
-def update_status(status_id:int,status:schemas.Status,db:Session=Depends(get_db)):
+def update_status(status_id:int,status:schemas.StatusUpdate,db:Session=Depends(get_db)):
     existing_status=db.query(models.Status).filter(models.Status.id==status_id).first()
     if not existing_status:
         raise HTTPException(status_code=404,detail="Status not found")
-    existing_status.report_id=status.report_id
     existing_status.comment=status.comment
     existing_status.updated_by=status.updated_by
     db.commit()
@@ -173,7 +170,7 @@ def delete_status(status_id:int,db:Session=Depends(get_db)):
     db.commit()
     return {"message":"Status deleted successfully"}
 @app.post("/departments",response_model=schemas.Department)
-def create_department(department:schemas.Department,db:Session=Depends(get_db)):
+def create_department(department:schemas.DepartmentCreate,db:Session=Depends(get_db)):
     new_department=models.Departments(department_name=department.department_name)
     db.add(new_department)
     db.commit()
@@ -190,7 +187,7 @@ def get_all_departments(db:Session=Depends(get_db)):
     departments=db.query(models.Departments).all()
     return departments
 @app.put("/departments/{department_id}",response_model=schemas.Department)
-def update_department(department_id:int,department:schemas.Department,db:Session=Depends(get_db)):
+def update_department(department_id:int,department:schemas.DepartmentUpdate,db:Session=Depends(get_db)):
     existing_department=db.query(models.Departments).filter(models.Departments.id==department_id).first()
     if not existing_department:
         raise HTTPException(status_code=404,detail="Department not found")

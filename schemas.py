@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 class User(BaseModel):
     id:int
@@ -36,29 +37,32 @@ class UserResponse(BaseModel):
 class Report(BaseModel):
     id:int
     user_id:int
-    department_id:int
+    department_id:Optional[int]=None
     title:str
     description:str
     category:str
-    image_url:str
+    image_url:Optional[str]=None
     latitude:float
     longitude:float
-    address:str
-    priority:str
-    status:str
+    address:Optional[str]=""
+    priority:Optional[str]="medium"
+    status:Optional[str]="submitted"
     created_at:datetime 
+    model_config = {
+        "from_attributes": True
+    }
 class ReportCreate(BaseModel):
     user_id:int
-    department_id:int
     title:str
     description:str
     category:str
-    image_url:str
     latitude:float
     longitude:float
-    address:str
-    priority:str
-    status:str
+    department_id:Optional[int]=None
+    image_url:Optional[str]=None
+    address:Optional[str]=""
+    priority:Optional[str]="medium"
+    status:Optional[str]="submitted"
 class ReportUpdate(BaseModel):
     title:str
     description:str
@@ -72,16 +76,16 @@ class ReportUpdate(BaseModel):
 class ReportResponse(BaseModel):
     id:int
     user_id:int
-    department_id:int
+    department_id:Optional[int]=None
     title:str
     description:str
     category:str
-    image_url:str
+    image_url:Optional[str]=None
     latitude:float
     longitude:float
-    address:str
-    priority:str
-    status:str
+    address:Optional[str]=""
+    priority:Optional[str]="medium"
+    status:Optional[str]="submitted"
     created_at:datetime   
     model_config = {
     "from_attributes": True
@@ -92,6 +96,9 @@ class Status(BaseModel):
     comment:str
     updated_by:str
     timestamp:datetime
+    model_config = {
+        "from_attributes": True
+    }
 class StatusCreate(BaseModel):
     report_id:int
     comment:str
@@ -110,7 +117,10 @@ class StatusResponse(BaseModel):
 }      
 class Department(BaseModel):
     id:int
-    department_name:str   
+    department_name:str
+    model_config = {
+        "from_attributes": True
+    }
 class DepartmentCreate(BaseModel):
     department_name:str
 class DepartmentUpdate(BaseModel):
