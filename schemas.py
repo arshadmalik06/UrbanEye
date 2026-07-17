@@ -1,133 +1,39 @@
+from sqlalchemy import Column,Integer,String,Float,DateTime,Text,ForeignKey
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel
-class User(BaseModel):
-    id:int
-    name:str
-    email:str
-    phone:str
-    password:str
-    role:str
-    created_at:datetime
-class UserCreate(BaseModel):
-    name:str
-    email:str
-    phone:str
-    password:str
-    role:str
-class UserUpdate(BaseModel):
-    name:str
-    email:str
-    phone:str
-    password:str
-    role:str
-class UserLogin(BaseModel):
-    email:str
-    password:str
-class UserResponse(BaseModel):
-    id:int
-    name:str
-    email:str
-    phone:str
-    role:str
-    created_at:datetime 
-    model_config={
-        "from_attributes":True
-    }                    
-class Report(BaseModel):
-    id:int
-    user_id:int
-    department_id:Optional[int]=None
-    title:str
-    description:str
-    category:str
-    image_url:Optional[str]=None
-    latitude:float
-    longitude:float
-    address:Optional[str]=""
-    priority:Optional[str]="medium"
-    status:Optional[str]="submitted"
-    created_at:datetime 
-    model_config = {
-        "from_attributes": True
-    }
-class ReportCreate(BaseModel):
-    user_id:int
-    title:str
-    description:str
-    category:str
-    latitude:float
-    longitude:float
-    department_id:Optional[int]=None
-    image_url:Optional[str]=None
-    address:Optional[str]=""
-    priority:Optional[str]="medium"
-    status:Optional[str]="submitted"
-class ReportUpdate(BaseModel):
-    title:str
-    description:str
-    category:str
-    image_url:str
-    latitude:float
-    longitude:float
-    address:str
-    priority:str
-    status:str
-class ReportResponse(BaseModel):
-    id:int
-    user_id:int
-    department_id:Optional[int]=None
-    title:str
-    description:str
-    category:str
-    image_url:Optional[str]=None
-    latitude:float
-    longitude:float
-    address:Optional[str]=""
-    priority:Optional[str]="medium"
-    status:Optional[str]="submitted"
-    created_at:datetime   
-    model_config = {
-    "from_attributes": True
-}                            
-class Status(BaseModel):
-    id:int
-    report_id:int
-    comment:str
-    updated_by:str
-    timestamp:datetime
-    model_config = {
-        "from_attributes": True
-    }
-class StatusCreate(BaseModel):
-    report_id:int
-    comment:str
-    updated_by:str
-class StatusUpdate(BaseModel):
-    comment:str
-    updated_by:str
-class StatusResponse(BaseModel):
-    id:int
-    report_id:int
-    comment:str
-    updated_by:str
-    timestamp:datetime  
-    model_config = {
-    "from_attributes": True
-}      
-class Department(BaseModel):
-    id:int
-    department_name:str
-    model_config = {
-        "from_attributes": True
-    }
-class DepartmentCreate(BaseModel):
-    department_name:str
-class DepartmentUpdate(BaseModel):
-    department_name:str
-class DepartmentResponse(BaseModel):
-    id:int
-    department_name:str
-    model_config = {
-    "from_attributes": True
-}
+from database import Base
+class Users(Base):
+    __tablename__='users'
+    id=Column(Integer,primary_key=True,index=True)
+    name = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    phone = Column(String(100), nullable=False)
+    password = Column(String(100), nullable=False)
+    role = Column(String(100), nullable=False)
+    created_at=Column(DateTime,default=datetime.utcnow)
+class Reports(Base):
+    __tablename__='reports'
+    id=Column(Integer,primary_key=True,index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
+    description = Column(Text, nullable=False)
+    title=Column(String(100), nullable=False)
+    image_url = Column(String(100), nullable=False) 
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+    address = Column(String(100), nullable=False)
+    category = Column(String(100), nullable=False)
+    priority = Column(String(100), nullable=False)
+    status = Column(String(100), nullable=False)
+    created_at=Column(DateTime,default=datetime.utcnow)
+class Status(Base):
+    __tablename__='status'
+    id=Column(Integer,primary_key=True,index=True)
+    report_id = Column(Integer, ForeignKey("reports.id"), nullable=False)
+    comment = Column(String(100), nullable=False)
+    updated_by = Column(String(100), nullable=False)
+    timestamp=Column(DateTime,default=datetime.utcnow)
+class Departments(Base):
+    __tablename__='departments'
+    id=Column(Integer,primary_key=True,index=True)
+    department_name = Column(String(100), unique=True, nullable=False)
+          
