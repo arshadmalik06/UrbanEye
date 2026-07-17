@@ -60,8 +60,7 @@
                         </form>
                         <div class="auth-divider">or</div>
                         <p class="text-center text-muted" style="font-size:0.85rem;">Already have an account?
-                            <a href="#" class="auth-switch-link" data-tab="login"
-                                style="color:#0f3460;font-weight:600;">Log in</a>
+                            <a href="#" class="auth-switch-link" data-tab="login">Log in</a>
                         </p>
                     </div>
                     <div class="auth-tab-pane" id="paneLogin">
@@ -80,8 +79,7 @@
                         </form>
                         <div class="auth-divider">or</div>
                         <p class="text-center text-muted" style="font-size:0.85rem;">Don't have an account?
-                            <a href="#" class="auth-switch-link" data-tab="register"
-                                style="color:#0f3460;font-weight:600;">Register</a>
+                            <a href="#" class="auth-switch-link" data-tab="register">Register</a>
                         </p>
                     </div>
                 </div>
@@ -90,22 +88,58 @@
     </div>
 
     <div id="map"></div>
-    <a href="report.html" class="btn btn-primary fab-btn">Report Issue</a>
-    <section class="container py-5 text-center">
+
+    <!-- Map Legend -->
+    <div class="map-legend">
+        <div class="legend-item">
+            <span class="legend-dot" style="background-color: #dc3545;"></span> Submitted
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot" style="background-color: #ffc107;"></span> Acknowledged
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot" style="background-color: #17a2b8;"></span> In Progress
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot" style="background-color: #28a745;"></span> Resolved
+        </div>
+    </div>
+
+    <a href="report.html" class="fab-btn">Report Issue</a>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section">
         <h2>Welcome to UrbanEye</h2>
         <hr>
-        <pre class="text-muted">
-            Crowdsourced Civic Issue Reporting & Resolution System A streamlined,
-            mobile-first solution designed to bridge the communication gap between
-            community members and municipal authorities. This platform empowers 
-            citizens to easily report everyday civic issues (like potholes, broken
-            streetlights, or uncollected trash) while providing local governments 
-            with a powerful dashboard to prioritize,route, and resolve these reports
-            efficiently.
-        </pre>
-        <hr>
-        <p class="text-muted">More features coming soon. Scroll down to explore.</p>
+        <p class="lead">
+            A crowdsourced civic issue reporting system that bridges the gap between
+            citizens and municipal authorities. Report potholes, broken streetlights,
+            water leaks, and more — right from your phone.
+        </p>
+
+        <div class="feature-cards">
+            <div class="feature-card card-report">
+                <span class="feature-icon"></span>
+                <h5>Report</h5>
+                <p>Snap a photo, pin your location, and submit a civic issue in seconds.</p>
+            </div>
+            <div class="feature-card card-track">
+                <span class="feature-icon"></span>
+                <h5>Track</h5>
+                <p>Follow your report's status from submission through to resolution.</p>
+            </div>
+            <div class="feature-card card-resolve">
+                <span class="feature-icon"></span>
+                <h5>Resolve</h5>
+                <p>Municipal teams receive, prioritize, and act on reports efficiently.</p>
+            </div>
+        </div>
     </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <strong>UrbanEye</strong> &mdash; Making cities better, one report at a time.
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -145,8 +179,8 @@
 
                     reports.forEach(report => {
                         const color = statusColors[report.status] || "#6c757d";
-                        const photoHtml = report.photo_url
-                            ? `<br><img src="${API_BASE}${report.photo_url}" style="max-width:150px;border-radius:6px;margin-top:6px;">`
+                        const photoHtml = report.image_url
+                            ? `<br><img src="${report.image_url}" style="max-width:150px;border-radius:6px;margin-top:6px;">`
                             : "";
 
                         L.marker([report.latitude, report.longitude], { icon: createColorIcon(color) })
@@ -155,12 +189,12 @@
                                 `<b>${report.category.toUpperCase()}</b><br>` +
                                 `${report.description}<br>` +
                                 `<small>Status: <strong>${report.status}</strong></small>` +
-                                `<br><small>Dept: ${report.department}</small>` +
+                                `<br><small>Dept ID: ${report.department_id || "N/A"}</small>` +
                                 photoHtml
                             );
                     });
                     if (reports.length > 0) {
-                        const latest = reports[0]; // already sorted desc
+                        const latest = reports[0];
                         map.setView([latest.latitude, latest.longitude], 15);
                     }
                 } catch (err) {
@@ -168,7 +202,6 @@
                     console.info("Make sure the backend is running: uvicorn main:app --reload");
                 }
             }
-
             loadReports();
         });
     </script>
