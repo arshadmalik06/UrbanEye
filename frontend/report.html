@@ -11,13 +11,15 @@
 
 <body>
 
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a href="index.html" class="navbar-brand mb-0 h1">UrbanEye</a>
-            <div class="navbar-auth-area" id="navbarAuthArea">
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a href="index.html" class="navbar-brand mb-0 h1">UrbanEye</a>
+                <div class="navbar-auth-area" id="navbarAuthArea">
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
     <div class="modal fade auth-modal" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -57,8 +59,7 @@
                         </form>
                         <div class="auth-divider">or</div>
                         <p class="text-center text-muted" style="font-size:0.85rem;">Already have an account?
-                            <a href="#" class="auth-switch-link" data-tab="login"
-                                style="color:#0f3460;font-weight:600;">Log in</a>
+                            <a href="#" class="auth-switch-link" data-tab="login">Log in</a>
                         </p>
                     </div>
                     <div class="auth-tab-pane" id="paneLogin">
@@ -77,8 +78,7 @@
                         </form>
                         <div class="auth-divider">or</div>
                         <p class="text-center text-muted" style="font-size:0.85rem;">Don't have an account?
-                            <a href="#" class="auth-switch-link" data-tab="register"
-                                style="color:#a7733c;font-weight:600;">Register</a>
+                            <a href="#" class="auth-switch-link" data-tab="register">Register</a>
                         </p>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                     <input class="form-control" type="file" id="photo" accept="image/*">
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Submit Report</button>
+                <button type="submit" class="auth-submit-btn">Submit Report</button>
             </form>
         </div>
     </div>
