@@ -85,7 +85,7 @@ function updateFormOverlay() {
     const formContainer = document.querySelector(".form-container");
     if (!formContainer) return;
 
-    if (isLoggedIn() || true) {
+    if (isLoggedIn()) {
         formContainer.classList.remove("login-required-overlay");
     }
     else {
@@ -265,6 +265,7 @@ if (getLocationBtn) {
                 locationStatus.classList.remove("d-none");
                 getLocationBtn.textContent = "Location Captured ✓";
                 getLocationBtn.classList.replace("btn-secondary", "btn-success");
+                getLocationBtn.disabled = false;
             },
             (error) => {
                 alert("Unable to retrieve location. Please allow location access.");
@@ -292,18 +293,9 @@ if (reportForm) {
         const description = document.getElementById("description").value;
         const lat = document.getElementById("latitude").value;
         const lng = document.getElementById("longitude").value;
-        const photoInput = document.getElementById("photo");
         if (!lat || !lng) {
             alert("Please capture your location before submitting.");
             return;
-        }
-        const formData = new FormData();
-        formData.append("category", category);
-        formData.append("description", description);
-        formData.append("latitude", lat);
-        formData.append("longitude", lng);
-        if (photoInput.files.length > 0) {
-            formData.append("photo", photoInput.files[0]);
         }
         const submitBtn = reportForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
@@ -318,6 +310,9 @@ if (reportForm) {
                 category: category,
                 latitude: parseFloat(lat),
                 longitude: parseFloat(lng),
+                address: "",
+                priority: "medium",
+                status: "submitted",
             };
             const res = await fetch(`${API_BASE}/reports`, {
                 method: "POST",
