@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanEye - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css?v=admin1">
+    <link rel="stylesheet" href="css/adminstyle.css?v=1">
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3>UrbanEye Admin</h3>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" class="active" data-view="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li><a href="#" data-view="reports"><i class="bi bi-file-earmark-text"></i> Reports</a></li>
+                <li><a href="index.html"><i class="bi bi-house"></i> Back to Map</a></li>
+                <li><a href="#" id="adminLogoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h2 id="viewTitle">Dashboard Overview</h2>
+                <div class="admin-profile">
+                    <span id="adminNameDisplay">Admin</span>
+                    <div class="navbar-user-avatar">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content-wrapper">
+                <!-- Dashboard View -->
+                <div id="dashboardView" class="admin-view active">
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- Populated by JS -->
+                        <div class="stat-card placeholder-card">Loading stats...</div>
+                    </div>
+                </div>
+
+                <!-- Reports View -->
+                <div id="reportsView" class="admin-view">
+                    <div class="reports-table-container">
+                        <table class="table table-hover admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin.js?v=admin1"></script>
+</body>
+</html>
