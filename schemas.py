@@ -8,7 +8,7 @@ class Users(Base):
     email = Column(String(100), unique=True, nullable=False)
     phone = Column(String(100), nullable=False)
     password = Column(String(100), nullable=False)
-    role = Column(String(100), nullable=False)
+    role = Column(String(100), nullable=False , default = "citizen")
     created_at=Column(DateTime,default=datetime.utcnow)
 class Reports(Base):
     __tablename__='reports'

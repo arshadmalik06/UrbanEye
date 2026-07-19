@@ -39,8 +39,7 @@ def create_user(user:schemas.UserCreate, db: Session = Depends(get_db)):
     new_user=models.Users(name=user.name,
                           email=user.email,
                           password=hashed_password,
-                          phone=user.phone,
-                          role=user.role)
+                          phone=user.phone)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
