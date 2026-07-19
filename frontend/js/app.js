@@ -49,7 +49,13 @@ function updateNavbarAuth() {
         const initial = user && user.name ? user.name.charAt(0).toUpperCase() : "U";
         const displayName = user ? user.name : "User";
 
+        let adminBtn = "";
+        if (user && user.role === "admin") {
+            adminBtn = `<a href="admin.html" class="btn-auth-login" style="margin-right:8px; text-decoration:none;">Admin Dashboard</a>`;
+        }
+
         area.innerHTML = `
+            ${adminBtn}
             <div class="navbar-user-badge">
                 <div class="navbar-user-avatar">${initial}</div>
                 <span>${displayName}</span>
